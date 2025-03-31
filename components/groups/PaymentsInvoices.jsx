@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState } from "react";
 import {
   DollarSign,
@@ -11,7 +10,7 @@ import {
   ChevronDown,
   CheckCircle,
   XCircle,
-  ClockCircle,
+  Clock,
 } from "lucide-react";
 import {
   Card,
@@ -202,7 +201,7 @@ const PaymentsInvoices = () => {
       case "refund_pending":
         return (
           <Badge className="bg-yellow-100 text-yellow-800">
-            <ClockCircle size={12} className="mr-1" /> Refund Pending
+            <Clock size={12} className="mr-1" /> Refund Pending
           </Badge>
         );
       default:

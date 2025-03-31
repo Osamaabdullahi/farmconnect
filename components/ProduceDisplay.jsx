@@ -5,7 +5,6 @@ import {
   Star,
   MapPin,
   Clock,
-  Filter,
   ShoppingCart,
   Grid,
   List,

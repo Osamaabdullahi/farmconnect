@@ -8,7 +8,6 @@ import {
   Truck,
   ChevronDown,
   LogOut,
-  Settings,
   User,
 } from "lucide-react";
 import useFarmConnectStore from "@/store";
