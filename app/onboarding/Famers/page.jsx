@@ -34,6 +34,7 @@ import { Progress } from "@/components/ui/progress";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/utils/supabaseClient";
 import { toast } from "sonner";
+import { Suspense } from "react";
 
 const FarmerOnboarding = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -819,80 +820,84 @@ const FarmerOnboarding = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="border-b">
-        <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h1 className="text-xl font-semibold text-green-500">
-                Farmer Registration
-              </h1>
-              <p className="text-sm text-muted-foreground">
-                Complete your profile to join FarmConnect
-              </p>
+    <Suspense>
+      <div className="min-h-screen bg-background">
+        <div className="border-b">
+          <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h1 className="text-xl font-semibold text-green-500">
+                  Farmer Registration
+                </h1>
+                <p className="text-sm text-muted-foreground">
+                  Complete your profile to join FarmConnect
+                </p>
+              </div>
+              <div className="flex items-center space-x-2">
+                <span className="text-sm text-muted-foreground">
+                  Step {currentStep} of {steps.length}
+                </span>
+              </div>
             </div>
-            <div className="flex items-center space-x-2">
-              <span className="text-sm text-muted-foreground">
-                Step {currentStep} of {steps.length}
-              </span>
+            <Progress
+              value={((currentStep - 1) / (steps.length - 1)) * 100}
+              className="h-2 bg-gray-200 [&>div]:bg-green-500"
+            />
+          </div>
+        </div>
+
+        <main className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="mb-8">
+            <h2 className="text-2xl font-semibold">
+              {steps[currentStep - 1].title}
+            </h2>
+            <p className="mt-1 text-muted-foreground">
+              {steps[currentStep - 1].subtitle}
+            </p>
+          </div>
+
+          <div className="max-w-2xl">
+            {renderStepContent()}
+
+            <div className="mt-8 flex items-center justify-between">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setCurrentStep(Math.max(1, currentStep - 1));
+                  // Clear validation errors when moving back
+                  setValidationErrors({});
+                }}
+                disabled={currentStep === 1}
+                className="flex items-center"
+              >
+                <ChevronLeft className="w-4 h-4 mr-2" />
+                Previous
+              </Button>
+
+              {loading ? (
+                <Button
+                  disabled
+                  className="flex items-center bg-green-500 hover:bg-green-600"
+                >
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Please wait
+                </Button>
+              ) : (
+                <Button
+                  onClick={handleNextStep}
+                  className="flex items-center bg-green-500 hover:bg-green-600"
+                >
+                  {currentStep === 5 ? "Submit" : "Next"}
+                  {currentStep !== 5 && (
+                    <ChevronRight className="w-4 h-4 ml-2" />
+                  )}
+                </Button>
+              )}
             </div>
           </div>
-          <Progress
-            value={((currentStep - 1) / (steps.length - 1)) * 100}
-            className="h-2 bg-gray-200 [&>div]:bg-green-500"
-          />
-        </div>
+        </main>
       </div>
-
-      <main className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h2 className="text-2xl font-semibold">
-            {steps[currentStep - 1].title}
-          </h2>
-          <p className="mt-1 text-muted-foreground">
-            {steps[currentStep - 1].subtitle}
-          </p>
-        </div>
-
-        <div className="max-w-2xl">
-          {renderStepContent()}
-
-          <div className="mt-8 flex items-center justify-between">
-            <Button
-              variant="outline"
-              onClick={() => {
-                setCurrentStep(Math.max(1, currentStep - 1));
-                // Clear validation errors when moving back
-                setValidationErrors({});
-              }}
-              disabled={currentStep === 1}
-              className="flex items-center"
-            >
-              <ChevronLeft className="w-4 h-4 mr-2" />
-              Previous
-            </Button>
-
-            {loading ? (
-              <Button
-                disabled
-                className="flex items-center bg-green-500 hover:bg-green-600"
-              >
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Please wait
-              </Button>
-            ) : (
-              <Button
-                onClick={handleNextStep}
-                className="flex items-center bg-green-500 hover:bg-green-600"
-              >
-                {currentStep === 5 ? "Submit" : "Next"}
-                {currentStep !== 5 && <ChevronRight className="w-4 h-4 ml-2" />}
-              </Button>
-            )}
-          </div>
-        </div>
-      </main>
-    </div>
+    </Suspense>
   );
 };
 
